@@ -1,12 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Store, select } from '@ngrx/store';
 
 import { Hero } from '@appModels/hero';
-import { HeroService } from '@appServices/hero.service';
 
-import * as fromSelectors from '@appStore/selectors';
-import * as fromReducers from '@appStore/reducers';
+import { map } from 'rxjs/operators';
+import { HeroesService } from '@appServices/heroes.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,11 +13,11 @@ import * as fromReducers from '@appStore/reducers';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements OnInit {
-  topHeroes$: Observable<Hero[]>;
+  heroes$: Observable<Hero[]>;
 
-  constructor(private store: Store<fromReducers.hero.State>) {}
+  constructor(private heroesService: HeroesService) {}
 
   ngOnInit() {
-    this.topHeroes$ = this.store.pipe(select(fromSelectors.getTopHeroes));
+    this.heroes$ = this.heroesService.entities$.pipe(map(e => e.slice(0, 4)));
   }
 }

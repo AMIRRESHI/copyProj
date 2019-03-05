@@ -3,25 +3,22 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Hero } from '@appModels/hero';
 import { HeroesComponent } from './heroes.component';
+import { HeroesService } from '@appServices/heroes.service';
 
 describe('HeroesComponent', () => {
   let comp: HeroesComponent;
   let fixture: ComponentFixture<HeroesComponent>;
+  let heroesService: HeroesService;
 
   beforeEach(() => {
-    const storeStub = {
-      pipe: () => ({}),
-      dispatch: () => ({})
-    };
-    const heroStub = {};
     TestBed.configureTestingModule({
       declarations: [HeroesComponent],
       schemas: [NO_ERRORS_SCHEMA],
-      providers: [
-        { provide: Store, useValue: storeStub },
-        { provide: Hero, useValue: heroStub }
-      ]
+      providers: [{ provide: HeroesService, useValue: {} }]
     });
+
+    heroesService = TestBed.get(HeroesService);
+
     fixture = TestBed.createComponent(HeroesComponent);
     comp = fixture.componentInstance;
   });
@@ -30,22 +27,22 @@ describe('HeroesComponent', () => {
     expect(comp).toBeTruthy();
   });
 
-  describe('delete', () => {
+  describe('add', () => {
     it('makes expected calls', () => {
-      const storeStub: Store<any> = fixture.debugElement.injector.get(Store);
-      const heroStub: Hero = fixture.debugElement.injector.get(Hero);
-      spyOn(storeStub, 'dispatch');
-      comp.delete(heroStub);
-      expect(storeStub.dispatch).toHaveBeenCalled();
+      heroesService.add = jest.fn();
+
+      comp.add('test');
+      expect(heroesService.add).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe('ngOnInit', () => {
+  describe('delete', () => {
     it('makes expected calls', () => {
-      const storeStub: Store<any> = fixture.debugElement.injector.get(Store);
-      spyOn(storeStub, 'pipe');
-      comp.ngOnInit();
-      expect(storeStub.pipe).toHaveBeenCalled();
+      const mockHero = { id: 1, name: 'test' };
+      heroesService.delete = jest.fn();
+
+      comp.delete(mockHero);
+      expect(heroesService.delete).toHaveBeenCalledTimes(1);
     });
   });
 });

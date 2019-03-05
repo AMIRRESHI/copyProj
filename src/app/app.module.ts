@@ -7,7 +7,6 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import {
   StoreRouterConnectingModule,
-  routerReducer,
   RouterStateSerializer
 } from '@ngrx/router-store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -26,11 +25,14 @@ import { HeroDetailComponent } from '@appContainers/hero-detail/hero-detail.comp
 import { MessagesComponent } from '@appComponents/messages/messages.component';
 import { HeroSearchComponent } from '@appComponents/hero-search/hero-search.component';
 
-import { HeroService } from '@appServices/hero.service';
 import { MessageService } from '@appServices/message.service';
 
 import * as fromStore from '@appStore/index';
 import { CustomRouterStateSerializer } from '@appStore/router';
+
+import {
+  EntityStoreModule
+} from './entity-store/entity-store.module';
 
 @NgModule({
   imports: [
@@ -40,6 +42,7 @@ import { CustomRouterStateSerializer } from '@appStore/router';
     HttpClientModule,
     StoreModule.forRoot(fromStore.reducers),
     EffectsModule.forRoot(fromStore.effects),
+    EntityStoreModule,
     StoreRouterConnectingModule.forRoot({
       stateKey: 'router' // name of reducer key
     }),
@@ -63,7 +66,6 @@ import { CustomRouterStateSerializer } from '@appStore/router';
     HeroSearchComponent
   ],
   providers: [
-    HeroService,
     MessageService,
     {
       provide: RouterStateSerializer,

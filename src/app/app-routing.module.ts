@@ -5,7 +5,6 @@ import { DashboardComponent } from '@appContainers/dashboard/dashboard.component
 import { HeroesComponent } from '@appContainers/heroes/heroes.component';
 import { HeroDetailComponent } from '@appContainers/hero-detail/hero-detail.component';
 import { HeroesGuard } from '@appGuards/heroes.guard';
-import { SelectedHeroGuard } from '@appGuards/selected-hero.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -17,7 +16,7 @@ const routes: Routes = [
   {
     path: 'detail/:id',
     component: HeroDetailComponent,
-    canActivate: [SelectedHeroGuard]
+    canActivate: [HeroesGuard]
   },
   {
     path: 'heroes',
@@ -29,6 +28,6 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [HeroesGuard, SelectedHeroGuard]
+  providers: [HeroesGuard]
 })
 export class AppRoutingModule {}

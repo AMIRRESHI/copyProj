@@ -1,24 +1,21 @@
 import {
   Component,
   OnInit,
-  Input,
   ChangeDetectionStrategy
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
 
-import { Store, select } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 
 import { Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import { Hero } from '@appModels/hero';
-import { HeroService } from '@appServices/hero.service';
 
-import * as fromSelectors from '@appStore/selectors';
-import * as fromReducer from '@appStore/reducers';
+import * as fromStore from '@appStore/index';
 
 import { Back } from '@appStore/actions/router.actions';
-import { UpdateHero } from '@appStore/actions/hero.actions';
+import { HeroesService } from '@appServices/heroes.service';
 
 @Component({
   selector: 'app-hero-detail',
@@ -29,17 +26,24 @@ import { UpdateHero } from '@appStore/actions/hero.actions';
 export class HeroDetailComponent implements OnInit {
   hero$: Observable<Hero>;
 
-  constructor(private store: Store<fromReducer.hero.State>) {}
+  constructor(
+    private heroesService: HeroesService,
+    private route: ActivatedRoute,
+    private store: Store<fromStore.State>
+  ) {}
 
   ngOnInit(): void {
-    this.hero$ = this.store.pipe(select(fromSelectors.getHeroById));
+    this.hero$ = this.heroesService.getByKey(this.route.snapshot.params['id']);
   }
 
   goBack(): void {
     this.store.dispatch(new Back());
   }
 
-  save(hero: Hero, heroName: string): void {
-    this.store.dispatch(new UpdateHero({ ...hero, name: heroName }));
+  save(hero: Hero, name: string): void {
+    this.heroesService
+      .update({ ...hero, name })
+      .pipe(first())
+      .subscribe(() => this.goBack());
   }
 }

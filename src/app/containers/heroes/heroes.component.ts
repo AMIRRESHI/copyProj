@@ -1,14 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-
-import { Store, select } from '@ngrx/store';
-
 import { Observable } from 'rxjs';
-
 import { Hero } from '@appModels/hero';
-
-import * as fromReducer from '@appStore/reducers';
-import * as fromSelectors from '@appStore/selectors';
-import { DeleteHero, AddHero } from '@appStore/actions/hero.actions';
+import { HeroesService } from '@appServices/heroes.service';
 
 @Component({
   selector: 'app-heroes',
@@ -19,21 +12,23 @@ import { DeleteHero, AddHero } from '@appStore/actions/hero.actions';
 export class HeroesComponent implements OnInit {
   heroes$: Observable<Hero[]>;
 
-  constructor(private store: Store<fromReducer.hero.State>) {}
+  constructor(private heroesService: HeroesService) {
+  }
 
   ngOnInit() {
-    this.heroes$ = this.store.pipe(select(fromSelectors.getHeroes));
+    this.heroes$ = this.heroesService.entities$;
   }
 
   add(name: string): void {
-    name = name.trim();
     if (!name) {
       return;
     }
-    this.store.dispatch(new AddHero({ name } as Hero));
+
+    name = name.trim();
+    this.heroesService.add({ name } as Hero);
   }
 
   delete(hero: Hero): void {
-    this.store.dispatch(new DeleteHero(hero));
+    this.heroesService.delete(hero);
   }
 }

@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from '@appServices/message.service';
+import {
+  EntityServices,
+  EntityCollectionReducerRegistry,
+  EntityCollectionReducerFactory,
+  EntityActionGuard
+} from 'ngrx-data';
 
 @Component({
   selector: 'app-messages',
@@ -7,7 +13,16 @@ import { MessageService } from '@appServices/message.service';
   styleUrls: ['./messages.component.css']
 })
 export class MessagesComponent implements OnInit {
-  constructor(public messageService: MessageService) {}
+  constructor(
+    public messageService: MessageService,
+    private entityServices: EntityServices
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.entityServices.reducedActions$.subscribe(res => {
+      if (res && res.type) {
+        this.messageService.add(res.type);
+      }
+    });
+  }
 }
